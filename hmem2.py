@@ -1,5 +1,5 @@
-# Hlipa game memory data
-# All rights belong to Karel �uhajda
+﻿# Hlipa game memory data
+# All rights belong to Karel Šuhajda
 # Included here to be used with the game map viewer
 
 import base64
