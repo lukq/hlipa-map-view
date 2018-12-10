@@ -70,7 +70,7 @@ def getBitmap(addr,rows,flip):
 # 17 19 21 23 -falmon in x+ (0a3d6) x- (0a21e) y+ (0a3d6) y- (0a21e)
 # 18 20 22 24 -alternative falmon
 # 25 -basic falmon (0a746)
-# 26 -falmon halfway up
+# 26 -falmon halfway up (0a746)
 def getBitmaps():
   b=(0x87ca,21,0, 0x896e,21,0, 0x8b12,21,0, 0x8cb6,21,0, 0x8e5a,21,0,
     0x8ffe,21,0, 0x91a2,21,0, 0x9346,21,0, 0x94ea,21,0, 0x968e,21,0,
@@ -96,7 +96,7 @@ colors=[
 # 1-15           32x21 px   standard tiles
 # 16             32x15 px   ploxon
 # 17-24          32x22 px   falmon moving x+ x- y+ y-
-# 25, 26         32x24 px   basic falmon, falmon moving up
+# 25, 26         32x24 px   basic falmon, falmon halfway up
 
 # Creates tile images in Tk from a list of bitmaps
 def makeTileImages(bmps):
@@ -169,8 +169,8 @@ def free(x,y,z): return voxel[x*128+y*16+z]+voxel[x*128+y*16+z-1]<1
 def getFalmon(n):
   if not falmon[n]: return
   x=falmon[n][0];y=falmon[n][1];z=falmon[n][2];b=falmon[n][3]
+  if b>13: b=int(random.uniform(0,12))
   a=25  # falmon image
-  b=b if b<14 else int(random.uniform(0,12))
   d=0
   for i in range(falmonstep):
     if d: a-=1;d=0;continue
@@ -183,7 +183,9 @@ def getFalmon(n):
       b=(1,0,3,2,5,6,7,4,11,8,9,10,13,12)[b];a=25
       if b==12: z+=1;a=26;d=1
       if b==13: z-=1;a=26;d=1
-  y+=(1 if a==24 else 0);x+=(1 if a==20 else 0);z-=(1 if d and b==12 else 0)
+  # during a halfway animation put falmon to x+ y+
+  x+=(1 if a==20 else 0);y+=(1 if a==24 else 0)
+  z-=(1 if d and b==12 else 0)
   point(a,x|8,y|8,z)
   return (x,y,z-1)
 
