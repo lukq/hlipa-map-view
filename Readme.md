@@ -39,7 +39,10 @@ command (replace path_to_python with the real path on your computer):
 
     path_to_python\python hlipamap.py
 
-When the program runs, it shows all game rooms that are on the same floor. To view a different floor,
-press keys Home or End, or use the on-screen buttons.
+## Controls
 
-You can also toggle between color rendering and shades of grey rendering by pressing the c key.
+The program does not show the complete map at once, only the current floor.
+
+Home, End - show a different floor
+c - show colors/shades of grey
+n - show room numbers
