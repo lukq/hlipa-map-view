@@ -43,6 +43,6 @@ command (replace path_to_python with the real path on your computer):
 
 The program does not show the complete map at once, only the current floor.
 
-Home, End - show a different floor
-c - show colors/shades of grey
+Home, End - show a different floor  
+c - show colors/shades of grey  
 n - show room numbers
