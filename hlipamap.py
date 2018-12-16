@@ -2,7 +2,7 @@
 import random
 from hmem2 import mr5480
 
-# Hlipa Map Viewer, version 0.6
+# Hlipa Map Viewer, version 0.7
 # December 2018
 # by Lukas Petru
 
@@ -15,6 +15,7 @@ from hmem2 import mr5480
 # Home/End -show another floor
 # c -toggle color/shades of grey rendering
 # n -show room numbers
+# s -save floor as an image file
 
 # For Python 3, with Tk 8.6
 
@@ -26,8 +27,9 @@ tkinter.Scrollbar(name='h',o='h',co='.c xview')
 
 def onKeySym(s):
   e=tkinter.Event(); e.char=e.keysym=s; return lambda:onKey(e)
-tkinter.Button(name='u',text='↑',command=onKeySym("Home"))
-tkinter.Button(name='d',text='↓',command=onKeySym("End"))
+
+tkinter.Button(name='c.u',text='↑',command=onKeySym("Home"))
+tkinter.Button(name='c.d',text='↓',command=onKeySym("End"))
 
 # Decodes Hlipa RAM data
 def decodeMem():
@@ -244,7 +246,7 @@ def show(plan,update):
   rooms=[r for i in range(len(m)) for r in showRoom(i,update,*m[i])]
   c.tk.call('set','r',rooms)
   c.tk.eval('''lmap {x y i} $r {.c create i $x $y -i d$i}
-   .c create wi 795 934 -win .u; .c create wi 795 970 -win .d
+   .c create wi 795 934 -win .c.u; .c create wi 795 970 -win .c.d
    .c create t 940 970 -te "Floor %s\nPress Home/End to show another floor"'''%
    (flooridx-1))
   if shownumbers: drawNumbers(m)
@@ -258,6 +260,19 @@ def onKey(e):
   if e.char=='n': shownumbers^=1
   if e.char=='-': falmonstep=(falmonstep+1)%25;show(floor[flooridx],1)
   else: show(floor[flooridx],0)
+
+# Saves the current floor as a gif image
+def onSave(e):
+  plan=floor[flooridx]
+  c.tk.eval('image create photo dd -w 2440 -h 1004; dd cop cH -t 0 0 2440 1004')
+  m=[(168*(x-y+5),63*(x+y-2))
+    for y in range(len(plan)) for x in range(len(plan[y])) if plan[y][x]>-1]
+  [c.tk.eval('dd cop d%s -t %s %s'%(i,*m[i])) for i in range(len(m))]
+  name='floor%s.gif'%(flooridx-1)
+  try: c.tk.eval('''dd write %s -fr 0 32
+    tk_messageBox -title Saved -message {Saved as %s}'''%(name,name))
+  except Exception as e:
+    c.tk.eval('tk_messageBox -icon error -title Error -message {%s}'%e)
 
 addr=bidx=0
 
@@ -378,6 +393,7 @@ c.bind_all('<End>',onKey)
 c.bind_all('-',onKey)
 c.bind_all('n',onKey)
 c.bind_all('c',toggleColors)
+c.bind_all('s',onSave)
 
 # Sets the initial position and draws the picture
 c.tk.eval('.c xview m .24;.c yview m .15')
